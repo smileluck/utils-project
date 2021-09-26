@@ -10,6 +10,8 @@ import top.zsmile.utils.OkHttpUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,19 +19,49 @@ import java.util.UUID;
 public class AmapCityDemo {
     private final static String API_KEY = "";
 
-    //当前页
-    private static int page = 1;
-    //每页显示数据
-    private static int offset = 25;
+
+    private static String[] keywordsStrs = {"幼儿园"};
+    private static int keywordsIndex = 0;
+
+    private static String[] typesStrs = {"141200"};
+    private static int typesIndex = 0;
+
+    private static String currentSearch = null;
 
     public static void main(String[] args) {
+        currentSearch = "keywordsStrs";
+        while (keywordsIndex < keywordsStrs.length) {
+            loop();
+            keywordsIndex++;
+        }
 
+        currentSearch = "typesStrs";
+        while (typesIndex < typesStrs.length) {
+            loop();
+            typesIndex++;
+        }
+    }
+
+    public static void loop() {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("sheet1");
         int rowCount = 0;
-        searchPoi(sheet, rowCount, page, offset);
+        //当前页
+        int page = 1;
+        //每页显示数据
+        int offset = 20;
         try {
-            workbook.write(new FileOutputStream(new File(UUID.randomUUID() + ".xlsx")));
+            searchPoi(sheet, rowCount, page, offset);
+            Date date = new Date();
+            String strDateFormat = "yyyy-MM-dd HHmmss";
+            SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+//            workbook.write(new FileOutputStream(new File(UUID.randomUUID() + ".xlsx")));
+
+            if (currentSearch.equalsIgnoreCase("keywordsStrs")) {
+                workbook.write(new FileOutputStream(new File(keywordsStrs[keywordsIndex] + "-" + sdf.format(date) + ".xlsx")));
+            } else {
+                workbook.write(new FileOutputStream(new File(typesStrs[typesIndex] + "-" + sdf.format(date) + ".xlsx")));
+            }
             workbook.close();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -44,7 +76,7 @@ public class AmapCityDemo {
      * 1. 替换API_KEY，需要使用绑定web服务
      * 2. 根据修改城市编码替换city字段
      */
-    public static void searchPoi(XSSFSheet sheet, int rowCount, int page, int offset) {
+    public static void searchPoi(XSSFSheet sheet, int rowCount, int page, int offset) throws InterruptedException {
         if (page == 1) {
 //            System.out.println("省份\t城市\t区域\t名称\t电话\tPOI编号\tPOI种类\t距离中心位置\t经纬度");
             XSSFRow row = sheet.createRow(rowCount++);
@@ -61,11 +93,19 @@ public class AmapCityDemo {
         }
         Map<String, String> params = new HashMap<>();
         params.put("key", API_KEY); // 开发API
-        params.put("keywords", "医院"); //多个关键字用“|”分割
+        if (currentSearch.equalsIgnoreCase("keywordsStrs")) {
+            params.put("keywords", keywordsStrs[keywordsIndex]); //多个关键字用“|”分割
+        } else {
+            params.put("types", typesStrs[typesIndex]);
+        }
+        // 0796 360800
         params.put("city", "0796"); // 经度和纬度用","分割，经度在前，纬度在后，经纬度小数点后不得超过6位
+        params.put("citylimit", true + "");
         params.put("offset", offset + "");
         params.put("page", page + "");
         String resStr = OkHttpUtils.get("https://restapi.amap.com/v3/place/text", params);
+        System.out.println((page * offset) + resStr);
+//        Thread.sleep(3000);
         if (resStr != null) {
             JSONObject resJson = JSON.parseObject(resStr);
             if (resJson.getIntValue("status") == 1) {
