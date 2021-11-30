@@ -1,10 +1,17 @@
 package top.zsmile.utils;
 
 import okhttp3.*;
+import okhttp3.internal.http.RealResponseBody;
+import okio.GzipSource;
+import okio.Okio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 public class OkHttpUtils {
 
@@ -195,14 +202,20 @@ public class OkHttpUtils {
      * @param request request
      * @return String
      */
-    private static String getBody(Request request) {
+    public static String getBody(Request request, boolean needGzip) {
         String responseBody = "";
         Response response = null;
         try {
             OkHttpClient okHttpClient = new OkHttpClient();
             response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                return response.body().string();
+                if (needGzip) {
+                    InputStream responseBodyBytes = response.body().byteStream();
+                    responseBody = decompressGZIP(responseBodyBytes);
+                } else {
+                    responseBody = response.body().string();
+                }
+                return responseBody;
             }
         } catch (Exception e) {
             log.error("okhttp3 post error >> ex = {}", e.getMessage());
@@ -214,4 +227,26 @@ public class OkHttpUtils {
         return responseBody;
     }
 
+    /**
+     * 获取body
+     *
+     * @param request request
+     * @return String
+     */
+    public static String getBody(Request request) {
+        return getBody(request, false);
+    }
+
+
+    public static String decompressGZIP(InputStream inputStream) throws IOException {
+        InputStream bodyStream = new GZIPInputStream(inputStream);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int length;
+        while ((length = bodyStream.read(buffer)) > 0) {
+            outStream.write(buffer, 0, length);
+        }
+
+        return new String(outStream.toByteArray());
+    }
 }
