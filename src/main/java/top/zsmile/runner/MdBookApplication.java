@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MdBookApplication {
 
-    private final static String path = "D:\\project\\B.Smile\\SmileX-boot\\smilex-study\\doc";
+    private final static String path = "D:\\project\\B.Smile\\SmileX-Note\\src";
 
     public static void main(String[] args) throws IOException {
         AtomicInteger dirCount = new AtomicInteger();
@@ -41,17 +41,20 @@ public class MdBookApplication {
                 System.out.println("文件" + file);
                 String fileName = file.getFileName().toString();
                 String absolutePath = file.toAbsolutePath().toString();
+                if (fileName.equalsIgnoreCase("README.md") || fileName.equalsIgnoreCase("SUMMARY.md")) {
 
-                if (fileName.endsWith(".md") || fileName.endsWith(".md")) {
-                    String replace = absolutePath.replace(path+"\\", "");
+                } else if (fileName.endsWith(".md") || fileName.endsWith(".md")) {
+                    String replace = absolutePath.replace(path + "\\", "");
                     absolutePath.replace("\\\\", "/");
                     String[] split = replace.split("\\\\");
 
                     int len = split.length - 1;
-                    for (int i = 0; i < len; i++) {
+                    for (int i = 0; i <= len; i++) {
                         sb.append("\t");
                     }
-                    sb.append("- [" + fileName.substring(0,fileName.length() - 3) + "](" + replace + ")\n");
+                    replace = replace.replace("\\", "/");
+                    replace = replace.replace(" ", "%20");
+                    sb.append("- [" + fileName.substring(0, fileName.length() - 3) + "](" + replace + ")\n");
 
                     fileCount.incrementAndGet();
                 }
