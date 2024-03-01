@@ -10,7 +10,7 @@ import java.io.File;
  */
 public class FileLoadApplication {
 
-    private final static String path = "D:\\project\\Senlink\\aojia\\澳嘉文化官网\\doc\\2021.4.30官网修改意见\\服务项目";
+    private final static String path = "D:\\project\\Senlink\\aojia\\website\\doc\\";
 
     public static void main(String[] args) {
         File root = new File(path);
