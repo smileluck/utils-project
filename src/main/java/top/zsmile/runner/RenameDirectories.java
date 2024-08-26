@@ -10,11 +10,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class RenameDirectories {
-    static Integer num = 19;
+    static Integer num = 1;
 
     public static void main(String[] args) {
         // 指定要读取的目录
-        String sourceDirectory = "C:\\Users\\drenc\\Desktop\\test\\资料\\展示背景";
+        String sourceDirectory = "C:\\Users\\drenc\\Desktop\\test\\资料\\new\\Archive 3\\新水壶";
 
 //        try {
         // 获取目录下的所有文件和文件夹
@@ -37,6 +37,14 @@ public class RenameDirectories {
 //        }
     }
 
+    private static String paddingleft(int num, String fixNum) {
+        String str = "" + num;
+        while (str.length() < 5){
+            str = "0" + str;
+    }
+        return str;
+}
+
     private static void renameFile(File file) {
 //        try {
         // 获取文件的原始名称
@@ -49,7 +57,10 @@ public class RenameDirectories {
         }
 
         // 按指定格式生成新名称，例如 "file_1.txt", "file_2.txt" 等
-        String newName = (num++) + extension;
+
+        String paddingleft = paddingleft(num++, "0");
+
+        String newName = "frame_" + paddingleft + extension;
 
         String newPath = file.getParentFile().getAbsolutePath() + "\\" + newName;
         File newFile = new File(newPath);
