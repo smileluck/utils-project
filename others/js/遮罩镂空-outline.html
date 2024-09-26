@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <div class="outer">
+            <div class="box"></div>
+            <div class="outline"></div>
+            <!-- <div class="mask"></div>
+            <div class="outer2">
+                <div class="box2"></div>
+            </div> -->
+        </div>
+    </div>
+
+</body>
+
+</html>
+<style>
+    .outer {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+
+    .mask {
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: #000;
+        opacity: .5;
+    }
+
+    .box {
+        width: 100vw;
+        height: 100vh;
+        background: url(1.png);
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .outer2 {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+
+    .outline{
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        outline: 3000px solid rgba(0, 0, 0, 0.5);
+    }
+    /* .box2 {
+        width: 100vw;
+        height: 100vh;
+        top: 0;
+        background-color: red;
+        position: absolute;
+        left: 0;
+    } */
+</style>
